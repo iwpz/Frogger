@@ -41,49 +41,37 @@ Player.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite),this.x,this.y);
 };
 
-Player.prototype.handleInput = function(key){
-    if (key == 'left') {
-        move(player,'left');
-    }
-     if (key == 'right') {
-        move(player,'right');
-    }
-    if (key == 'up') {
-        move(player,'up');
-    }
-    if (key == 'down') {
-        move(player,'down');
-    }
-};
-
 /**
 * @description 移动一个对象
 * @constructor
-* @param {Player/Enemy} obj - 要移动的对象
 * @param {string} direction - 要移动的方向
 */
-var move = function(obj,direction){
+Player.prototype.move = function(direction){
     if (direction == 'left') {
-        if (obj.x / 101 > 0) {
-            obj.x = obj.x - 101;
+        if (this.x / 101 > 0) {
+            this.x = this.x - 101;
         }
     }
     if (direction == 'right') {
-        if (obj.x / 101 < 4) {
-            obj.x = obj.x + 101;
+        if (this.x / 101 < 4) {
+            this.x = this.x + 101;
         }
     }
     if (direction == 'up') {
-        if (obj.y / 80 > 0) {
-            obj.y = obj.y - 80;
+        if (this.y / 80 > 0) {
+            this.y = this.y - 80;
         }
     }
     if (direction == 'down') {
-        if (obj.y / 80 < 5) {
-            obj.y = obj.y + 80;
+        if (this.y / 80 < 5) {
+            this.y = this.y + 80;
         }
     }
-}
+};
+
+Player.prototype.handleInput = function(key){
+    this.move(key);
+};
 
 /**
 * @description 坐标转换

@@ -39,6 +39,10 @@ var Engine = (function(global) {
          */
         update(dt);
         render();
+        if (player.y / 80 <= 0) {
+            reset();
+            alert ('you win!');
+        }
 
         /* 设置我们的 lastTime 变量，它会被用来决定 main 函数下次被调用的事件。 */
         lastTime = now;
@@ -73,7 +77,7 @@ var Engine = (function(global) {
 * @constructor
 */
 var checkCollisions = function(){
-    if (player.y != 0) {
+    if (player.y >= 0) {
         allEnemies.forEach(function(enemy) {
             //如果player的x和enemy相距50（图片宽度是101，约取一半），并且y相等，我们则认为player与enemy碰撞
                 if (Math.abs(enemy.x - player.x)<=50 && enemy.y == player.y) {
@@ -92,13 +96,7 @@ var checkCollisions = function(){
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        if (player.y / 80 <=0 ) {
-            alert('you win!');
-            reset();
-        }
-        else{
-            player.update();
-        }
+        player.update();
     }
 
     /* 这个函数做了一些游戏的初始渲染，然后调用 renderEntities 函数。记住，这个函数
