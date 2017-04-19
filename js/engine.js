@@ -18,11 +18,16 @@ var Engine = (function(global) {
     var doc = global.document,
         win = global.window,
         canvas = doc.createElement('canvas'),
+        scores = doc.createElement('span');
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime = 0,
+        score = 0,
+        tempGems = new Array();
 
     canvas.width = 505;
     canvas.height = 606;
+    scores.innerText  = 'score:'+ score;
+    doc.body.appendChild(scores);
     doc.body.appendChild(canvas);
 
     /* 这个函数是整个游戏的主入口，负责适当的调用 update / render 函数 */
@@ -40,8 +45,10 @@ var Engine = (function(global) {
         update(dt);
         render();
         if (player.y / 80 <= 0) {
+            score += 10;
             reset();
-            alert ('you win!');
+            scores.innerText  = 'score:'+ score;
+            alert ('you win!\n score:'+score);
         }
 
         /* 设置我们的 lastTime 变量，它会被用来决定 main 函数下次被调用的事件。 */
@@ -57,9 +64,10 @@ var Engine = (function(global) {
      * 做一次就够了
      */
     function init() {
-        reset();
+        //reset();
         lastTime = Date.now();
         main();
+        tempGems = allGems.slice();
     }
 
     /* 这个函数被 main 函数（我们的游戏主循环）调用，它本身调用所有的需要更新游戏角色
@@ -72,6 +80,7 @@ var Engine = (function(global) {
         checkCollisions();
     }
 
+
     /**
 * @description 碰撞检测
 * @constructor
@@ -81,8 +90,18 @@ var checkCollisions = function(){
         allEnemies.forEach(function(enemy) {
             //如果player的x和enemy相距50（图片宽度是101，约取一半），并且y相等，我们则认为player与enemy碰撞
                 if (Math.abs(enemy.x - player.x)<=50 && enemy.y == player.y) {
-                    alert('game over!');
+                    score -= 10;
+                    scores.innerText  = 'score:'+ score;
+                    alert('game over!\n score:' + score);
                     reset();
+                }
+            });
+            allGems.forEach(function(gem) {
+            //如果player的x和enemy相距50（图片宽度是101，约取一半），并且y相等，我们则认为player与enemy碰撞
+                if (Math.abs(gem.x - player.x)<=50 && gem.y == player.y) {
+                    score += 10;
+                    scores.innerText  = 'score:'+ score;
+                    removeObjWithArr(allGems,gem);
                 }
             });
     }
@@ -95,6 +114,9 @@ var checkCollisions = function(){
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
+        });
+        allGems.forEach(function(gem) {
+            gem.update();
         });
         player.update();
     }
@@ -141,6 +163,10 @@ var checkCollisions = function(){
             enemy.render();
         });
 
+        allGems.forEach(function(gem) {
+            gem.render();
+        });
+
         player.render();
     }
 
@@ -151,8 +177,13 @@ var checkCollisions = function(){
     function reset() {
         // 空操作
         allEnemies.forEach(function(enemy) {
-            enemy.x = 0;
+            enemy.x = getRandomFloat(5) * TILE_WIDTH;
         });
+        allGems = tempGems.slice();
+        allGems.forEach(function(gem) {
+            gem.x = getRandomInt(0,5) * TILE_WIDTH;
+        });
+
         player = new Player(2,5);
 
     }
@@ -165,7 +196,8 @@ var checkCollisions = function(){
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/Gem Blue.png'
     ]);
     Resources.onReady(init);
 
