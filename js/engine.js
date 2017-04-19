@@ -21,13 +21,13 @@ var Engine = (function(global) {
         scores = doc.createElement('span');
         ctx = canvas.getContext('2d'),
         lastTime = 0,
-        score = 0,
-        tempGems = new Array();
+        score = 0,//积分
+        tempGems = new Array();//用来临时存储宝石，移除后方便复位
 
     canvas.width = 505;
     canvas.height = 606;
     scores.innerText  = 'score:'+ score;
-    doc.body.appendChild(scores);
+    doc.body.appendChild(scores);//添加积分显示在页面上
     doc.body.appendChild(canvas);
 
     /* 这个函数是整个游戏的主入口，负责适当的调用 update / render 函数 */
@@ -64,7 +64,6 @@ var Engine = (function(global) {
      * 做一次就够了
      */
     function init() {
-        //reset();
         lastTime = Date.now();
         main();
         tempGems = allGems.slice();
@@ -97,7 +96,7 @@ var checkCollisions = function(){
                 }
             });
             allGems.forEach(function(gem) {
-            //如果player的x和enemy相距50（图片宽度是101，约取一半），并且y相等，我们则认为player与enemy碰撞
+            //碰撞检测同Enemy，只不过不会gameover，积分+10,并且移除宝石
                 if (Math.abs(gem.x - player.x)<=50 && gem.y == player.y) {
                     score += 10;
                     scores.innerText  = 'score:'+ score;
@@ -162,7 +161,7 @@ var checkCollisions = function(){
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
+        //同Enemy，绘制宝石
         allGems.forEach(function(gem) {
             gem.render();
         });
@@ -179,9 +178,10 @@ var checkCollisions = function(){
         allEnemies.forEach(function(enemy) {
             enemy.x = getRandomFloat(5) * TILE_WIDTH;
         });
+        //将临时存储的宝石还原回来
         allGems = tempGems.slice();
         allGems.forEach(function(gem) {
-            gem.x = getRandomInt(0,5) * TILE_WIDTH;
+            gem.x = getRandomInt(0,4) * TILE_WIDTH;
         });
 
         player = new Player(2,5);
@@ -197,7 +197,7 @@ var checkCollisions = function(){
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
-        'images/Gem Blue.png'
+        'images/Gem Blue.png'//添加了宝石图片
     ]);
     Resources.onReady(init);
 

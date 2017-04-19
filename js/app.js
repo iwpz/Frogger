@@ -29,6 +29,7 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+//宝石对象
 var Gem = function(x,y){
     this.x = changeXY('x',x);
     this.y = changeXY('y',y);
@@ -65,25 +66,30 @@ Player.prototype.render = function(){
 * @param {string} direction - 要移动的方向
 */
 Player.prototype.move = function(direction){
-    if (direction == 'left') {
-        if (this.x / TILE_WIDTH > 0) {
-            this.x = this.x - TILE_WIDTH;
-        }
-    }
-    if (direction == 'right') {
-        if (this.x / TILE_WIDTH < 4) {
-            this.x = this.x + TILE_WIDTH;
-        }
-    }
-    if (direction == 'up') {
-        if (this.y / TILE_HEIGHT > 0) {
-            this.y = this.y - TILE_HEIGHT;
-        }
-    }
-    if (direction == 'down') {
-        if (this.y / TILE_HEIGHT < 5) {
-            this.y = this.y + TILE_HEIGHT;
-        }
+    //使用switch判断
+    switch(direction){
+        case 'left':
+            if (this.x / TILE_WIDTH > 0) {
+                this.x = this.x - TILE_WIDTH;
+            }
+            break;
+        case 'right':
+            if (this.x / TILE_WIDTH < 4) {
+                this.x = this.x + TILE_WIDTH;
+            }
+            break;
+        case 'up':
+            if (this.y / TILE_HEIGHT > 0) {
+                this.y = this.y - TILE_HEIGHT;
+            }
+            break;
+        case 'down':
+            if (this.y / TILE_HEIGHT < 5) {
+                this.y = this.y + TILE_HEIGHT;
+            }
+            break;
+        default:
+            break;
     }
 };
 
@@ -98,17 +104,13 @@ Player.prototype.handleInput = function(key){
 * @param {string} value - 要转换的坐标值，从网格坐标转换为像素坐标
 */
 var changeXY = function(xory,value){
-    if (xory == 'x') {
-        return (value * TILE_WIDTH);
-    }
-    if (xory == 'y') {
-        return (value * TILE_HEIGHT);
-    }
-    return 0;
+    //使用三目运算符判断
+    var ret = xory =='x'?value * TILE_WIDTH:(xory == 'y'?value * TILE_HEIGHT:0);
+    return ret;
 };
 
 /**
-* @description 产生随机数
+* @description 产生随机浮点数
 * @constructor
 * @param {int} value - 倍数
 */
@@ -118,13 +120,22 @@ var getRandomFloat = function(value)
     return Rand;
 };
 
-var getRandomInt = function(Min,Max)
+/**
+* @description 产生随机整数
+* @constructor
+* @param {int} min - 最小值
+* @param {int} max - 最大值
+*/
+var getRandomInt = function(min,max)
 {   
-var Range = Max - Min;   
+var Range = max - min;   
 var Rand = Math.random();   
-return(Min + Math.round(Rand * Range));   
+return(min + Math.round(Rand * Range));   
 }
 
+//----------------------------------------------------------------
+//从数组中移除指定对象
+//http://blog.csdn.net/iamlegendary/article/details/54093219
 var removeObjWithArr = function (_arr,_obj) {
     var length = _arr.length;
     for(var i = 0; i < length; i++)
@@ -149,6 +160,7 @@ var removeObjWithArr = function (_arr,_obj) {
         }
     }
 };
+//----------------------------------------------------------------
 
 // 现在实例化你的所有对象
 // 把所有敌人的对象都放进一个叫 allEnemies 的数组里面
@@ -161,9 +173,10 @@ for (var i = 0; i < 3; i++) {
     allEnemies[i] = enemy;
 }
 
+// 使用for循环添加宝石，位置随机，但每行一个
 var allGems = new Array();
 for (var i = 0; i < 3; i++) {
-    var gem = new Gem(getRandomInt(0,5),(i+1));
+    var gem = new Gem(getRandomInt(0,4),(i+1));
     allGems[i] = gem;
 }
 
